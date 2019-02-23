@@ -39,7 +39,7 @@ public class HTTPHelper {
                 .queryParam("/api/v2/get_case/"+testId )
                 .header("Authorization", "Basic "+ new String(authorizationHeader))
                 .get();
-
+res.body().jsonPath();
 
     }
 
@@ -50,7 +50,7 @@ public class HTTPHelper {
                 .queryParam("/api/v2/get_run/"+runId)
                 .header("Authorization" ,"Basic "+ new String(authorizationHeader))
                 .get();
-        System.out.println(res.asString());
+        System.out.println(res);
     }
 
     public static void main(String[] args) throws IOException  {
