@@ -16,7 +16,7 @@ public class ModulePage extends HeaderComponent {
     private static Logger LOGGER = Logger.getLogger(FavouritePage.class);
 
     private WebDriver driver;
-    private int MAX_AJAX_WAIT = 60;
+    private int MAX_AJAX_WAIT = 6;
     private String ADD_FAVORITE_MSG = "Added to Favorites";
 
     public ModulePage(WebDriver driver) {
@@ -24,7 +24,7 @@ public class ModulePage extends HeaderComponent {
         this.driver = driver;
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, MAX_AJAX_WAIT), this);
         open();
-        waitforModulePageToLoad();
+        //waitforModulePageToLoad();
     }
 
     @FindBy(className = "slds-notify__content")
@@ -48,10 +48,13 @@ public class ModulePage extends HeaderComponent {
      * @throws SalesforceException
      */
     public boolean favoriteGivenModules(List<String> names) throws SalesforceException {
+
+
         boolean bFavorite = true;
         try {
             for (String moduleName : names) {
-                String locator = "//a[@title='"+ moduleName+"'][@class='tile-title']/ancestor::div[@class='tile-content']//ul/li/button";
+               //String locator = "//a[@title='"+ moduleName+"'][@class='tile-title']/ancestor::div[@class='tile-content']//ul/li/button";
+    String locator = "//a[contains(text(),'"+moduleName+"')]/ancestor::div[contains(@class,'tds-content-tile')]//button";
                 WebElement moduleEle = driver.findElement(By.xpath(locator));
                 moduleEle.click();
                 waitForElementInvisibility(By.className("loving"));
@@ -75,6 +78,7 @@ public class ModulePage extends HeaderComponent {
      * This method is used to open Modules page
      */
     public void open() {
+        clickLearn();
         getModulesLink().click();
     }
 

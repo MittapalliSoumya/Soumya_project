@@ -29,9 +29,11 @@ public class TrailsPage extends HeaderComponent{
     private WebElement trailsLink;
 
 
-    @FindBy(className = "th-trailmix-list__heading-link")
-    private WebElement addToNewTrail;
+    @FindBy(xpath = "//ul[contains(@class,'content-actions')]//button[contains(@class,'tds-button_icon-medium')]")
+    private WebElement addbutton;
 
+    @FindBy(css = ".th-trailmix-list__heading-link")
+    private WebElement addToNewTrail;
 
 
 
@@ -56,8 +58,12 @@ public class TrailsPage extends HeaderComponent{
     public void selectTrailName(String trailName) throws SalesforceException {
 
         try {
-            String locator = "//a[contains(@title,'"+trailName+"')]/ancestor::div[@class='tile-content']//li[@data-react-class='trailmixes/TrailmixesPopover/TrailmixesPopover']";
-                WebElement moduleEle = driver.findElement(By.xpath(locator));
+            //Learn Privacy and Data Protection Law
+
+          String name = trailName.replaceAll("\\s+","-").toLowerCase();
+            String locator="[data-test='tile-title'] a[href*='"+name+"']";
+
+                WebElement moduleEle = driver.findElement(By.cssSelector(locator));
                 moduleEle.click();
 
         } catch (NoSuchElementException e) {
@@ -70,6 +76,7 @@ public class TrailsPage extends HeaderComponent{
 
 
     public TrailmixPage clickAddToNewTrail(){
+        addbutton.click();
         addToNewTrail.click();
         return new TrailmixPage(driver);
 

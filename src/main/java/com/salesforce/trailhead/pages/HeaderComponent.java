@@ -24,29 +24,33 @@ public class HeaderComponent extends BasePage {
         waitforSearchBarToLoad();
     }
 
-    @FindBy(className = "th-button--avatar")
+    @FindBy(className = "tds-avatar")
     private WebElement avatarBtn;
 
     @FindBy(id = "search")
     private WebElement searchBar;
 
-    @FindBy(xpath = "//span[text()='Favorites']")
+    @FindBy(xpath = "//a[contains(text(),'Favorites')]")
     private WebElement favoriteLink;
 
-    @FindBy(xpath = "//span[text()='Log Out']")
+    @FindBy(xpath = "//a[contains(text(),'Log Out')]")
     private WebElement logoutLink;
 
-    @FindBy(xpath = "//div[@data-test='header-account-name']")
+    @FindBy(xpath = "//div[@data-test='header-user-name']")
     private WebElement accountNameEle;
 
-    @FindBy(className = "tds-button_base")
+    @FindBy(className = "tds-button_neutral")
     private WebElement loginLink;
 
     @FindBy(className = "slds-modal__content")
     private WebElement modalContent;
 
-    @FindBy(className = "th-modal-btn__salesforce")
+    @FindBy(id = "login_with_salesforce")
     private WebElement salesforceLogin;
+
+    @FindBy(xpath = "//button[text()='Learn']")
+    private WebElement learnBtn;
+
 
     public WebElement getLoginLink() {
         return loginLink;
@@ -58,6 +62,10 @@ public class HeaderComponent extends BasePage {
 
     public WebElement getSalesforceLogin() {
         return salesforceLogin;
+    }
+
+    public void clickLearn(){
+        learnBtn.click();
     }
 
     public WebElement getAvatarBtn() {
@@ -118,7 +126,7 @@ public class HeaderComponent extends BasePage {
      */
     public LoginPage clickSalesforceLogin() throws SalesforceException {
         clickonLoginLink();
-        waitforModalContent();
+       // waitforModalContent();
         clickonSalesforceLogin();
         return new LoginPage(driver);
     }

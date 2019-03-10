@@ -1,6 +1,7 @@
 package com.salesforce.trailhead.common;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
@@ -8,8 +9,7 @@ import org.apache.commons.net.util.Base64;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class TestRailAPI {
 
@@ -35,27 +35,80 @@ public class TestRailAPI {
 
     }
 
-    public  List<String> get_testCase_Title(int runId){
+    private List<Map<String, String>> get_testCase_Title(int runId){
         Response res = httpHelper.getRequest("api/v2/get_tests/", runId, auth);
         String json = res.getBody().asString();
-        List<String> titles = JsonPath.parse(json).read("$..title");
-        return titles;
+      //  List<String> titles = JsonPath.parse(json).read("$..title");
+
+        ReadContext ctx = JsonPath.parse(json);
+        List<Map<String, String>> TestsList = ctx.read("$..[?(@.title)]", List.class);
+
+
+        List<Map<String, String>> finalTestsList = new ArrayList<>();
+        Map<String, String> newMap = null;
+        try {
+            for (Map<String, String> mapObj : TestsList) {
+                newMap = new HashMap<String, String>();
+                newMap.put("id", (mapObj.get("id") != null) ? String.valueOf(mapObj.get("id")) : "");
+                newMap.put("title", (mapObj.get("title") != null) ? mapObj.get("title").toString() : "");
+                newMap.put("case_id", (mapObj.get("case_id") != null) ? String.valueOf(mapObj.get("case_id")) : "");
+                newMap.put("status_id", (mapObj.get("status_id") != null) ? String.valueOf(mapObj.get("status_id")) : "");
+                finalTestsList.add(newMap);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return finalTestsList;
+
     }
 
 
-    public void update_results(int runId){
-      List<String> tcTitle = get_testCase_Title(runId);
+    public void update_results(int runId,Map<String,Integer> map ) {
 
-     // Response res = httpHelper.postRequest("/api/v2/add_results_for_cases/",runId, auth);
+        Response res = httpHelper.postRequest("/api/v2/add_results_for_cases/",runId, auth, generate_payload(map));
+    }
+
+
+    private String generate_payload( Map<String, Integer> map){
+
+        int status;
+        String payload = "";
+        String item;
+
+
+        List<Map<String, String>> testcaseDetails = get_testCase_Title(3103);
+
+        for(Map<String,String> x : testcaseDetails){
+           if(map.keySet().contains(x.get("case_id"))){
+             status =  map.get(x.get("case_id"));
+             item = "{\"case_id\": "+x.get("case_id") +",\"status_id\": "+status+"}";
+             payload =  payload + item + ",";
+           }
+        }
+        payload = payload.replaceAll(",$", "");
+
+        return "{\"results\":[" + payload + "]}";
+
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public enum Status{
+        SUCCESS(1),
+        BLOCKED(2),
+        FAILURE(5),
+        SKIPPED(4);
 
-        TestRailAPI test = new TestRailAPI();
-        List<String> titles = test.get_testCase_Title(3103);
+        private int value;
 
-       System.out.println(titles);
+        Status(int value){
+            this.value = value;
+        }
+
+        public int getStatusId(){
+            return value;
+        }
+
 
     }
 }

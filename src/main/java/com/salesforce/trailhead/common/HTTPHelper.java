@@ -21,18 +21,15 @@ public class HTTPHelper {
     }
 
 
-    public Response postRequest(String url, int id,Header auth ) {
+    public Response postRequest(String url,int id,Header auth,String payload) {
+
         Response res = given()
                 .contentType("application/json")
+                .accept("application/json")
                 .queryParam(url + id)
                 .header(auth)
+                .body(payload)
                 .post();
         return res;
     }
-
-
-
-
-
-
 }

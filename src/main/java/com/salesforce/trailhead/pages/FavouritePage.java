@@ -16,17 +16,17 @@ public class FavouritePage extends HeaderComponent {
     private static Logger LOGGER = Logger.getLogger(FavouritePage.class);
 
     private WebDriver driver;
-    private int MAX_AJAX_WAIT = 60;
+    private int MAX_AJAX_WAIT = 6;
 
     public FavouritePage(WebDriver driver) {
         super(driver);
         this.driver = driver;
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, MAX_AJAX_WAIT), this);
         openPage();
-        waitForElement(By.className("favorites-container"));
+//        waitForElement(By.className("favorites-container"));
     }
 
-    @FindBy(className = "tile-title")
+    @FindBy(xpath = "//h3[@data-test='tile-title']")
     private List<WebElement> favoriteModules;
 
 
@@ -38,7 +38,9 @@ public class FavouritePage extends HeaderComponent {
     public void unFavoriteModules(List<String> names) {
         LOGGER.info("==> Un-favourite the given modules");
         for (String moduleName : names) {
-            String locator = "//a[@title='"+ moduleName+"'][@class='tile-title']/ancestor::div[@class='tile-content']//ul/li/button";
+            //String locator = "//a[@title='"+ moduleName+"'][@class='tile-title']/ancestor::div[@class='tile-content']//ul/li/button";
+
+            String locator = "//a[contains(text(),'"+moduleName+"')]/ancestor::div[contains(@class,'tds-content-tile')]//button";
             WebElement moduleEle = driver.findElement(By.xpath(locator));
             moduleEle.click();
             waitForElementInvisibility(By.className("unloving"));

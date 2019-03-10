@@ -1,7 +1,11 @@
 package modules;
 
 import base.BaseTest;
-import com.salesforce.trailhead.pages.*;
+import base.TestData;
+import com.salesforce.trailhead.pages.HeaderComponent;
+import com.salesforce.trailhead.pages.LoginPage;
+import com.salesforce.trailhead.pages.TrailmixPage;
+import com.salesforce.trailhead.pages.TrailsPage;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
@@ -14,8 +18,8 @@ public class TrailTest extends BaseTest {
 
 
     @Test
+    @TestData(testCaseId = "8360")
     public void testTrails(){
-
 
         // Variables specific to the test case
         String expectedAccountName = "soumya mittapalli";
@@ -36,6 +40,9 @@ public class TrailTest extends BaseTest {
         //verify login successful
         Assert.assertEquals(expectedAccountName, headerComponent.getAccountName());
 
+        //click on learn dropdownlink
+        headerComponent.clickLearn();
+
         //select trails page
         trailsPage = new TrailsPage(driver);
         trailsPage.selectTrailName(trailName);
@@ -44,7 +51,6 @@ public class TrailTest extends BaseTest {
         //verify new trail page is opened
 
         Assert.assertEquals("Create a trailmix", trailmixPage.getPageTitle());
-
         trailmixPage.fillTrailform(name, description);
         trailmixPage.clickSubmit();
         Assert.assertEquals(trailmixPage.getTrailName(),trailName);
@@ -59,7 +65,7 @@ public class TrailTest extends BaseTest {
 
     @AfterMethod
     public void deleteTrailmix(){
-        trailmixPage.clickDelete();
+      trailmixPage.clickDelete();
 
     }
 }
